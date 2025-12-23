@@ -1,4 +1,3 @@
-import React from 'react';
 import './App.css';
 import People from './pages/People';
 
@@ -17,7 +16,7 @@ function App() {
       </main>
 
       <footer className="app-footer">
-        <p>Full-Stack CRUD Application &copy; 2024</p>
+        <p>Full-Stack CRUD Application &copy; 2025</p>
       </footer>
     </div>
   );
