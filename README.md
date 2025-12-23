@@ -1,13 +1,16 @@
-# 📋 Sistema CRUD Full-Stack - Cadastro de Pessoas
+# Sistema CRUD Full-Stack - Cadastro de Pessoas
 
-Um projeto completo de CRUD (Create, Read, Update, Delete) com arquitetura cliente-servidor, demonstrando boas práticas de desenvolvimento full-stack.
+Um projeto completo de CRUD (Create, Read, Update, Delete) com arquitetura cliente-servidor, demonstrando boas práticas de desenvolvimento full-stack com **React**, **Node.js/Express**, **MySQL** e **Sequelize ORM**.
 
-## 🏗️ Arquitetura do Projeto
+---
+
+## Arquitetura do Projeto
 
 ```
 project-root/
 ├── client/                    # Frontend React
 │   ├── public/
+│   │   └── index.html
 │   ├── src/
 │   │   ├── components/
 │   │   │   └── PersonForm.js
@@ -19,10 +22,9 @@ project-root/
 │   │   ├── App.css
 │   │   ├── index.js
 │   │   └── index.css
-│   ├── package.json
-│   └── README.md
+│   └── package.json
 │
-├── server/                    # Backend Express + Node.js
+├── server/                    # Backend Node.js + Express
 │   ├── controllers/
 │   │   └── peopleController.js
 │   ├── models/
@@ -31,162 +33,182 @@ project-root/
 │   │   └── peopleRoutes.js
 │   ├── utils/
 │   │   └── db.js
+│   ├── config/
+│   │   └── config.cjs
+│   ├── migrations/
+│   │   └── 20251223153642-create-people.cjs
 │   ├── index.js
-│   ├── package.json
-│   └── README.md
+│   └── package.json
 │
 ├── database/
-│   └── schema.sql
+│   └── schema.sql             # Schema SQL alternativo
 │
-├── .env.example
-├── README.md (este arquivo)
-└── package.json
+├── .gitignore
+├── README.md
+└── package.json               # Scripts auxiliares raiz
 ```
 
-## 🛠️ Tecnologias Utilizadas
+---
+
+## Tecnologias Utilizadas
 
 ### Frontend
 - **React 18.2** - Biblioteca UI moderna
-- **Axios** - Cliente HTTP para requisições
-- **CSS3** - Estilização customizada
+- **Axios 1.6** - Cliente HTTP para requisições
+- **CSS3** - Estilização customizada e responsiva
 
 ### Backend
 - **Node.js** - Runtime JavaScript
-- **Express 4.18** - Framework web
-- **MySQL2/Promise** - Conector MySQL assíncrono
+- **Express 4.18** - Framework web minimalista
+- **Sequelize 6.37** - ORM para MySQL
+- **MySQL2 3.16** - Driver MySQL com Promises
 - **CORS** - Controle de origem cruzada
-- **dotenv** - Gerencimento de variáveis de ambiente
+- **dotenv** - Gerenciamento de variáveis de ambiente
 
 ### Banco de Dados
-- **MySQL** - Banco de dados relacional
+- **MySQL 5.7+** - Banco de dados relacional
 
-## 📋 Pré-requisitos
+---
 
-Certifique-se de ter instalados:
+## Pré-requisitos
 
-- **Node.js** (v14 ou superior)
+Certifique-se de ter instalado:
+
+- **Node.js** v14 ou superior ([Download](https://nodejs.org/))
 - **npm** ou **yarn**
-- **MySQL** (v5.7 ou superior)
+- **MySQL** v5.7 ou superior ([Download](https://dev.mysql.com/downloads/))
 
-## 🚀 Guia de Instalação e Execução
+---
 
-### 1️⃣ Configuração do Banco de Dados
+## Guia de Instalação e Execução
+
+### Clone o Repositório
 
 ```bash
-# Abra o terminal do MySQL
-mysql -u root -p
-
-# Execute o script SQL
-source /caminho/para/database/schema.sql
+git clone <seu-repositorio>
+cd project-root
 ```
 
-Ou copie e execute manualmente:
+### Configuração do Banco de Dados
 
+#### Opção A: Via Sequelize (Recomendado)
+
+```bash
+# Entre no diretório do servidor
+cd server
+
+# Configure as variáveis de ambiente
+cp .env.example .env
+
+# Edite o arquivo .env com suas credenciais MySQL:
+# DB_HOST=localhost
+# DB_USERNAME=root
+# DB_PASSWORD=sua_senha
+# DB_DATABASE=people_db
+# DB_PORT=3306
+# PORT=8080
+
+# Execute as migrations do Sequelize
+npx sequelize-cli db:create
+npx sequelize-cli db:migrate
+```
+
+#### Opção B: Via SQL Manual
+
+```bash
+# Acesse o MySQL
+mysql -u root -p
+
+# Execute o schema
+source database/schema.sql
+```
+
+**Schema SQL:**
 ```sql
-CREATE DATABASE people_db;
-
+CREATE DATABASE IF NOT EXISTS people_db;
 USE people_db;
 
 CREATE TABLE people (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
+  name VARCHAR(150) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
   phone VARCHAR(20),
-  email VARCHAR(100),
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_email ON people(email);
 CREATE INDEX idx_name ON people(name);
 ```
 
-### 2️⃣ Configuração do Backend
+### Instalação de Dependências
 
+#### Instalar tudo de uma vez (raiz do projeto):
 ```bash
-# Navegue para a pasta server
+npm run install-all
+```
+
+#### Ou instalar separadamente:
+
+**Backend:**
+```bash
 cd server
-
-# Instale as dependências
 npm install
-
-# Copie o arquivo .env.example para .env
-# No Windows:
-copy ..\\.env.example .env
-
-# No macOS/Linux:
-cp ../.env.example .env
-
-# Edite o arquivo .env com suas credenciais MySQL
-# DB_HOST=localhost
-# DB_USER=seu_usuario
-# DB_PASSWORD=sua_senha
-# DB_NAME=people_db
-# PORT=8080
 ```
 
-**Inicie o servidor:**
-
+**Frontend:**
 ```bash
-# Produção
-npm start
-
-# Desenvolvimento (com auto-reload)
-npm run dev
-```
-
-O backend estará rodando em: `http://localhost:8080`
-
-### 3️⃣ Configuração do Frontend
-
-```bash
-# Navegue para a pasta client
 cd client
-
-# Instale as dependências
 npm install
-
-# Copie as variáveis de ambiente
-# No Windows:
-copy ..\\.env.example .env.local
-
-# No macOS/Linux:
-cp ../.env.example .env.local
-
-# Ou crie um .env.local com:
-# REACT_APP_API_URL=http://localhost:8080/api
 ```
 
-**Inicie a aplicação React:**
+### Executar a Aplicação
 
+#### Terminal 1 - Backend:
 ```bash
+cd server
+npm start          # Produção
+# ou
+npm run dev        # Desenvolvimento (auto-reload com --watch)
+```
+
+O backend estará rodando em: **http://localhost:8080**
+
+#### Terminal 2 - Frontend:
+```bash
+cd client
 npm start
 ```
 
-A aplicação abrirá automaticamente em: `http://localhost:3000`
+O frontend abrirá automaticamente em: **http://localhost:3000**
 
-## 📡 Endpoints da API
+---
 
-### GET /api/people
+## Endpoints da API
+
+### Base URL
+```
+http://localhost:8080/api
+```
+
+### **GET** `/people`
 Lista todas as pessoas cadastradas.
 
-**cURL:**
-```bash
-curl http://localhost:8080/api/people
-```
-
-**Resposta:**
+**Resposta (200 OK):**
 ```json
 [
   {
     "id": 1,
     "name": "João Silva",
-    "phone": "(11) 99999-9999",
     "email": "joao@email.com",
-    "created_at": "2024-01-15T10:30:00.000Z"
+    "phone": "(11) 99999-9999",
+    "createdAt": "2025-12-23T15:30:00.000Z",
+    "updatedAt": "2025-12-23T15:30:00.000Z"
   }
 ]
 ```
 
-### GET /api/people/:id
+### **GET** `/people/:id`
 Retorna uma pessoa específica.
 
 **cURL:**
@@ -194,8 +216,17 @@ Retorna uma pessoa específica.
 curl http://localhost:8080/api/people/1
 ```
 
-### POST /api/people
+### **POST** `/people`
 Cria uma nova pessoa.
+
+**Body (JSON):**
+```json
+{
+  "name": "Maria Santos",
+  "email": "maria@email.com",
+  "phone": "(21) 98888-8888"
+}
+```
 
 **cURL:**
 ```bash
@@ -208,7 +239,17 @@ curl -X POST http://localhost:8080/api/people \
   }'
 ```
 
-### PUT /api/people/:id
+**Resposta (201 Created):**
+```json
+{
+  "id": 2,
+  "name": "Maria Santos",
+  "email": "maria@email.com",
+  "phone": "(21) 98888-8888"
+}
+```
+
+### **PUT** `/people/:id`
 Atualiza dados de uma pessoa.
 
 **cURL:**
@@ -222,7 +263,7 @@ curl -X PUT http://localhost:8080/api/people/1 \
   }'
 ```
 
-### DELETE /api/people/:id
+### **DELETE** `/people/:id`
 Remove uma pessoa.
 
 **cURL:**
@@ -230,118 +271,175 @@ Remove uma pessoa.
 curl -X DELETE http://localhost:8080/api/people/1
 ```
 
-## ✨ Funcionalidades Principais
+**Resposta (200 OK):**
+```json
+{
+  "message": "Person deleted successfully"
+}
+```
+
+---
+
+## Funcionalidades Principais
 
 ### Frontend
-- ✅ Formulário de cadastro com validação
-- ✅ Lista de pessoas em tabela
-- ✅ Edição de registros
-- ✅ Exclusão de registros com confirmação
+- ✅ Formulário de cadastro com validação em tempo real
+- ✅ Lista de pessoas em tabela responsiva
+- ✅ Edição inline de registros
+- ✅ Exclusão com confirmação modal
 - ✅ Mensagens de feedback (sucesso/erro)
-- ✅ Interface responsiva
-- ✅ Estados de carregamento
+- ✅ Interface responsiva (mobile-first)
+- ✅ Estados de carregamento e erro
 
 ### Backend
-- ✅ API REST completa
-- ✅ Padrão MVC
-- ✅ Tratamento de erros
-- ✅ Validação de dados
+- ✅ API REST completa (CRUD)
+- ✅ Padrão MVC com Sequelize ORM
+- ✅ Validações de dados no controller
+- ✅ Tratamento global de erros
 - ✅ CORS configurado
-- ✅ Pool de conexões MySQL
-- ✅ Async/await com async/await
+- ✅ Pool de conexões gerenciado pelo Sequelize
+- ✅ Migrations para versionamento do schema
+- ✅ Timestamps automáticos (createdAt/updatedAt)
 
-## 🔐 Segurança
+---
 
-- Variáveis sensíveis em `.env` (não commitado)
-- Validação no backend e frontend
-- Tratamento de erros sem exposição de dados
-- CORS configurado
-- Prepared statements para prevenir SQL injection
+## Segurança Implementada
 
-## 📊 Estrutura do Banco de Dados
+- ✅ Variáveis sensíveis em `.env` (não commitadas)
+- ✅ Validação no backend **e** frontend
+- ✅ Tratamento de erros sem exposição de dados sensíveis
+- ✅ CORS configurado adequadamente
+- ✅ Sequelize protege contra SQL injection automaticamente
+- ✅ Email único com constraint no banco de dados
 
-### Tabela: people
+---
 
-| Coluna | Tipo | Descrição |
-|--------|------|-----------|
-| id | INT | Identificador único (PK, AUTO_INCREMENT) |
-| name | VARCHAR(100) | Nome completo da pessoa |
-| phone | VARCHAR(20) | Telefone (opcional) |
-| email | VARCHAR(100) | Email único |
-| created_at | TIMESTAMP | Data de criação automática |
+## Estrutura do Banco de Dados
+
+### Tabela: `people`
+
+| Coluna      | Tipo           | Descrição                          |
+|-------------|----------------|------------------------------------|
+| id          | INT            | Identificador único (PK, AUTO_INCREMENT) |
+| name        | VARCHAR(150)   | Nome completo da pessoa            |
+| email       | VARCHAR(150)   | Email único (UNIQUE constraint)    |
+| phone       | VARCHAR(20)    | Telefone (opcional)                |
+| createdAt   | TIMESTAMP      | Data de criação automática         |
+| updatedAt   | TIMESTAMP      | Data de atualização automática     |
 
 **Índices:**
-- `idx_email` - Para buscas por email
-- `idx_name` - Para buscas por nome
+- `PRIMARY KEY` em `id`
+- `UNIQUE` em `email`
+- `INDEX idx_email` para buscas rápidas por email
+- `INDEX idx_name` para buscas rápidas por nome
 
-## 🧪 Teste Rápido
+---
 
-### Backend
+## Teste Rápido
 
+### Verificar Backend
 ```bash
-# Verifique se o API está rodando
 curl http://localhost:8080/api/health
 ```
 
-Resposta esperada:
+**Resposta esperada:**
 ```json
 { "status": "API is running" }
 ```
 
-### Frontend
-
+### Verificar Frontend
 Acesse `http://localhost:3000` no navegador.
 
-## 🐛 Troubleshooting
+---
+
+## Troubleshooting
 
 ### Erro: "Cannot connect to database"
-- Verifique se MySQL está rodando
-- Confirme credenciais no `.env`
+**Soluções:**
+- Verifique se MySQL está rodando: `systemctl status mysql` (Linux) ou verifique Services (Windows)
+- Confirme credenciais no arquivo `.env`
 - Verifique se o banco `people_db` foi criado
 
 ### Erro: "CORS error"
-- Certifique-se que o backend está rodando
-- Verifique o URL da API no `.env` do frontend
+**Soluções:**
+- Certifique-se que o backend está rodando na porta 8080
+- Verifique se o `REACT_APP_API_URL` no frontend está correto
 
 ### Frontend não conecta ao backend
-- Verifique se `REACT_APP_API_URL` está correto
+**Soluções:**
+- Verifique se `REACT_APP_API_URL` está definido corretamente
 - Confirme que a porta 8080 está disponível
 - Reinicie o servidor backend
 
-### Porta 3000/8080 já em uso
+### Porta já em uso
 ```bash
-# Encontre o processo
+# Linux/Mac - Encontrar processo usando a porta
 lsof -i :3000   # ou :8080
-
-# Mate o processo (Linux/Mac)
 kill -9 <PID>
+
+# Windows
+netstat -ano | findstr :3000
+taskkill /PID <PID> /F
 
 # Ou use portas diferentes
 PORT=8081 npm start   # Backend
 PORT=3001 npm start   # Frontend
 ```
 
-## 📚 Estrutura de Código
+### Erro do Sequelize: "SequelizeConnectionError"
+**Soluções:**
+- Verifique se as variáveis `DB_USERNAME`, `DB_PASSWORD`, `DB_DATABASE`, `DB_HOST` estão corretas no `.env`
+- Certifique-se que o usuário MySQL tem permissões adequadas
 
-### Padrão MVC (Backend)
+---
 
-**Models** - Operações de banco:
+## Arquivos para Remover (Desnecessários)
+
+Se você está usando apenas o frontend em `/client`, remova:
+
+```bash
+# Remover estrutura TypeScript/Vite não utilizada
+rm -rf src/
+rm eslint.config.js
+rm postcss.config.js
+rm tailwind.config.js
+rm tsconfig.*.json
+rm vite.config.ts
+rm index.html  # da raiz (mantenha apenas o de client/public/)
+```
+
+---
+
+## Estrutura de Código
+
+### Padrão MVC (Backend com Sequelize)
+
+**Models** - Definição de entidades e operações:
 ```javascript
 // personModel.js
-export const getAllPeople = async () => { ... }
-export const createPerson = async (name, phone, email) => { ... }
+export const getAllPeople = async () => {
+  return await Person.findAll({ order: [['createdAt', 'DESC']] });
+};
 ```
 
 **Controllers** - Lógica de negócio:
 ```javascript
 // peopleController.js
-export const getAllPeople = async (req, res) => { ... }
+export const getAllPeople = async (req, res) => {
+  try {
+    const people = await PersonModel.getAllPeople();
+    res.status(200).json(people);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 ```
 
 **Routes** - Definição de rotas:
 ```javascript
 // peopleRoutes.js
 router.get('/people', PeopleController.getAllPeople);
+router.post('/people', PeopleController.createPerson);
 ```
 
 ### Componentes React
@@ -349,60 +447,49 @@ router.get('/people', PeopleController.getAllPeople);
 **PersonForm** - Formulário reutilizável com validação
 **People** - Página principal com CRUD completo
 
-## 🚀 Próximas Melhorias
+---
 
-- [ ] Autenticação e autorização
-- [ ] Paginação na lista
-- [ ] Busca e filtro
-- [ ] Ordenação de colunas
-- [ ] Validação de email único
-- [ ] Testes unitários e E2E
-- [ ] CI/CD pipeline
-- [ ] Docker setup
-- [ ] Documentação Swagger
-- [ ] Cache com Redis
+## Scripts Disponíveis
 
-## 📄 Documentação Adicional
-
-- [README do Backend](./server/README.md)
-- [README do Frontend](./client/README.md)
-- [Script SQL](./database/schema.sql)
-
-## 📝 Licença
-
-MIT License - Sinta-se livre para usar e modificar!
-
-## 👨‍💻 Estrutura de Desenvolvimento
-
-### Commits Sugeridos
-
+### Raiz do Projeto
 ```bash
-git add .
-git commit -m "feat: Setup database schema"
-git commit -m "feat: Create Express API with CRUD endpoints"
-git commit -m "feat: Build React frontend with forms and table"
-git commit -m "docs: Add comprehensive documentation"
+npm run install-all   # Instala todas as dependências
+npm run server        # Inicia o backend
+npm run server:dev    # Backend em modo desenvolvimento
+npm run client        # Inicia o frontend
 ```
 
-### Padrão de Código
+### Backend (`/server`)
+```bash
+npm start             # Inicia o servidor
+npm run dev           # Modo desenvolvimento (auto-reload)
+```
 
-- Nomes de variáveis descritivos
-- Funções pequenas e focadas
-- Tratamento de erros em todos os endpoints
-- Comentários em lógicas complexas
-
-## 🎓 Aprendizados
-
-Este projeto demonstra:
-- Arquitetura cliente-servidor
-- Padrão MVC
-- Operações CRUD completas
-- Comunicação HTTP via APIs REST
-- Validação de dados
-- Tratamento de erros
-- Design responsivo
-- Boas práticas de JavaScript
+### Frontend (`/client`)
+```bash
+npm start             # Inicia o app React
+npm run build         # Build para produção
+npm test              # Executa testes
+```
 
 ---
 
-**Pronto para rodar! Boa sorte!** 🚀
+## Próximas Melhorias Sugeridas
+
+- [ ] Implementar autenticação JWT
+- [ ] Adicionar paginação na listagem
+- [ ] Sistema de busca e filtros avançados
+- [ ] Ordenação dinâmica de colunas
+- [ ] Validação de email único no formulário (antes do submit)
+- [ ] Testes unitários (Jest + React Testing Library)
+- [ ] Testes E2E (Cypress ou Playwright)
+- [ ] CI/CD pipeline (GitHub Actions)
+- [ ] Containerização com Docker
+- [ ] Documentação Swagger/OpenAPI
+- [ ] Cache com Redis
+- [ ] Rate limiting
+- [ ] Logging estruturado (Winston/Pino)
+
+---
+
+**Desenvolvido por Diego Tamiozzo** 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './PersonForm.css';
 
 const PersonForm = ({ onSubmit, initialData = null, isLoading = false }) => {
   const [formData, setFormData] = useState({
@@ -20,39 +21,27 @@ const PersonForm = ({ onSubmit, initialData = null, isLoading = false }) => {
 
   const validateForm = () => {
     const newErrors = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Nome é obrigatório';
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email é obrigatório';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email inválido';
-    }
-
+    if (!formData.name.trim()) newErrors.name = 'Nome é obrigatório';
+    if (!formData.email.trim()) newErrors.email = 'Email é obrigatório';
+    else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Email inválido';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    if (validateForm()) {
-      onSubmit(formData);
-    }
+    if (validateForm()) onSubmit(formData);
   };
 
   return (
     <form onSubmit={handleSubmit} className="form-container">
+      <h2 className="form-title">{initialData ? 'Atualizar Pessoa' : 'Cadastrar Pessoa'}</h2>
+
       <div className="form-group">
         <label htmlFor="name">Nome *</label>
         <input
@@ -93,11 +82,7 @@ const PersonForm = ({ onSubmit, initialData = null, isLoading = false }) => {
         />
       </div>
 
-      <button
-        type="submit"
-        className="btn-submit"
-        disabled={isLoading}
-      >
+      <button type="submit" className="btn-submit" disabled={isLoading}>
         {isLoading ? 'Processando...' : (initialData ? 'Atualizar' : 'Cadastrar')}
       </button>
     </form>
