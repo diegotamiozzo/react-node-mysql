@@ -101,47 +101,17 @@ cd server
 cp .env.example .env
 
 # Edite o arquivo .env com suas credenciais MySQL:
-# DB_HOST=localhost
-# DB_USERNAME=root
-# DB_PASSWORD=sua_senha
-# DB_DATABASE=people_db
-# DB_PORT=3306
+# DB_HOST=
+# DB_USERNAME=
+# DB_PASSWORD=
+# DB_DATABASE=
+# DB_PORT=
 # PORT=8080
 
 # Execute as migrations do Sequelize
 npx sequelize-cli db:create
 npx sequelize-cli db:migrate
 ```
-
-#### Opção B: Via SQL Manual
-
-```bash
-# Acesse o MySQL
-mysql -u root -p
-
-# Execute o schema
-source database/schema.sql
-```
-
-**Schema SQL:**
-```sql
-CREATE DATABASE IF NOT EXISTS people_db;
-USE people_db;
-
-CREATE TABLE people (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(150) NOT NULL,
-  email VARCHAR(150) NOT NULL UNIQUE,
-  phone VARCHAR(20),
-  createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-
-CREATE INDEX idx_email ON people(email);
-CREATE INDEX idx_name ON people(name);
-```
-
-### Instalação de Dependências
 
 #### Instalar tudo de uma vez (raiz do projeto):
 ```bash
@@ -228,7 +198,7 @@ Cria uma nova pessoa.
 }
 ```
 
-**cURL:**
+**CURL:**
 ```bash
 curl -X POST http://localhost:8080/api/people \
   -H "Content-Type: application/json" \
