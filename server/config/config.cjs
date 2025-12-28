@@ -8,8 +8,10 @@ module.exports = {
     host: process.env.DB_HOST,
     port: Number(process.env.DB_PORT),
     dialect: 'mysql',
+    timezone: '-03:00',
     dialectOptions: {
       connectTimeout: 60000,
+      timezone: 'local',
     },
   },
 };

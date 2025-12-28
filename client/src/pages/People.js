@@ -132,7 +132,11 @@ const People = () => {
                       <td>{person.phone || '-'}</td>
                       <td>
                         {person.createdAt
-                          ? new Date(person.createdAt).toLocaleDateString('pt-BR')
+                          ? new Date(person.createdAt).toLocaleString('pt-BR', {
+                              timeZone: 'America/Sao_Paulo',
+                              dateStyle: 'short',
+                              timeStyle: 'short',
+                            })
                           : '-'}
                       </td>
 
